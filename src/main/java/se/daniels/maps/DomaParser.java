@@ -14,7 +14,7 @@ import java.util.List;
 public class DomaParser {
 
     public static List<DomaMap> parse(Document doc, String baseUrl) throws MalformedURLException {
-        List<DomaMap> domaMapList = new ArrayList<DomaMap>();
+        List<DomaMap> domaMapList = new ArrayList<>();
         Elements elements = doc.select(".fullWidth").get(1).select("tbody tr");
         for(Element element : elements){
             try {
@@ -36,7 +36,8 @@ public class DomaParser {
                 .setName(getMapName(row))
                 .setDateFromString(getDateString(row))
                 .setLocalId(getLocalId(row))
-                .setUrl(baseUrl + getMapUrl(row))
+                .setMapUrlFromLocalId(baseUrl)
+                .setDomaUrl(baseUrl + getMapUrl(row))
                 .setUpdateDateFromString(getUpdatedate(row))
                 .build();
     }

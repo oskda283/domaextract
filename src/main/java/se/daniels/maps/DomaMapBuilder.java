@@ -1,5 +1,11 @@
 package se.daniels.maps;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +14,7 @@ public class DomaMapBuilder {
 
     private String name;
 
-    private String url;
+    private String domaUrl;
 
     private DomaOwner owner;
 
@@ -18,16 +24,17 @@ public class DomaMapBuilder {
 
     private Date updateDate;
 
+    private String mapUrl;
+
     public DomaMapBuilder(){
     }
 
-    public DomaMapBuilder setName(String name){
-        this.name = name;
+    public DomaMapBuilder setName(@Nullable String mapName){
         return this;
     }
 
-    public DomaMapBuilder setUrl(String url) {
-        this.url = url;
+    public DomaMapBuilder setDomaUrl(String domaUrl) {
+        this.domaUrl = domaUrl;
         return this;
     }
 
@@ -51,7 +58,23 @@ public class DomaMapBuilder {
         return this;
     }
 
+    public DomaMapBuilder setMapUrlFromLocalId(String baseUrl) {
+        final String url = baseUrl + "map_images/" + localId + ".jpg";
+        try {
+            final URL testUrl = new URL(url);
+            HttpURLConnection huc = (HttpURLConnection) testUrl.openConnection();
+            huc.setRequestMethod("HEAD");
+            int responseCode = huc.getResponseCode();
+            if (responseCode == 200){
+                this.mapUrl = url;
+            }
+            return this;
+        } catch (IOException e) {
+            return this;
+        }
+    }
+
     public DomaMap build(){
-        return new DomaMap(name,url, localId, owner,date,updateDate);
+        return new DomaMap(name, domaUrl, mapUrl, localId, owner,date,updateDate);
     }
 }
