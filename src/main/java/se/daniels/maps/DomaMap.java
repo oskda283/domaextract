@@ -18,7 +18,9 @@ public class DomaMap {
 
     public final Date updateDate;
 
-    public DomaMap(String name, String domaUrl, String mapUrl, String localId, DomaOwner owner, Date date, Date updateDate) {
+    public final GPSLocation gpsLocation;
+
+    public DomaMap(String name, String domaUrl, String mapUrl, String localId, DomaOwner owner, Date date, Date updateDate, GPSLocation gpsLocation) {
         this.name = name;
         this.domaUrl = domaUrl;
         this.mapUrl = mapUrl;
@@ -26,5 +28,6 @@ public class DomaMap {
         this.owner = owner;
         this.date = date;
         this.updateDate = updateDate;
+        this.gpsLocation = gpsLocation;
     }
 }

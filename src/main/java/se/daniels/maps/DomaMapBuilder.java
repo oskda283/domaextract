@@ -2,7 +2,6 @@ package se.daniels.maps;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +22,8 @@ public class DomaMapBuilder {
     private Date updateDate;
 
     private String mapUrl;
+
+    private GPSLocation gpsLocation;
 
     public DomaMapBuilder(){
     }
@@ -72,7 +73,12 @@ public class DomaMapBuilder {
         }
     }
 
+    public DomaMapBuilder extractLocation() {
+        this.gpsLocation = MapLocationExtractor.extractFromJpgUrl(mapUrl);
+        return this;
+    }
+
     public DomaMap build(){
-        return new DomaMap(name, domaUrl, mapUrl, localId, owner,date,updateDate);
+        return new DomaMap(name, domaUrl, mapUrl, localId, owner, date, updateDate, gpsLocation);
     }
 }

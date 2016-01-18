@@ -18,9 +18,7 @@ public class DomaParser {
         for(Element element : elements){
             try {
                 domaMapList.add(extractOmap(element, baseUrl));
-            } catch (ParseException e) {
-                System.out.print("Could not parse row with data: "+ element.html());
-            } catch (NullPointerException e){
+            } catch (ParseException | NullPointerException e) {
                 System.out.print("Could not parse row with data: "+ element.html());
             }
         }
@@ -38,6 +36,7 @@ public class DomaParser {
                 .setMapUrlFromLocalId(baseUrl)
                 .setDomaUrl(baseUrl + getMapUrl(row))
                 .setUpdateDateFromString(getUpdateDate(row))
+                .extractLocation()
                 .build();
     }
 
