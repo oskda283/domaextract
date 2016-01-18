@@ -1,6 +1,5 @@
 package se.daniels.maps;
 
-import org.jetbrains.annotations.Nullable;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -20,7 +19,7 @@ public class DomaParser {
             try {
                 domaMapList.add(extractOmap(element, baseUrl));
             } catch (ParseException e) {
-                e.printStackTrace();
+                System.out.print("Could not parse row with data: "+ element.html());
             } catch (NullPointerException e){
                 System.out.print("Could not parse row with data: "+ element.html());
             }
@@ -38,20 +37,18 @@ public class DomaParser {
                 .setLocalId(getLocalId(row))
                 .setMapUrlFromLocalId(baseUrl)
                 .setDomaUrl(baseUrl + getMapUrl(row))
-                .setUpdateDateFromString(getUpdatedate(row))
+                .setUpdateDateFromString(getUpdateDate(row))
                 .build();
     }
 
-    @Nullable
-    private static String getUpdatedate(Elements row) {
+    private static String getUpdateDate(Elements row) {
         try {
-            return row.get(4).text();
+            return row.get(4).html();
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
 
-    @Nullable
     private static String getMapUrl(Elements row) {
         try{
             return row.get(1).select("a").get(0).attr("href");
@@ -60,7 +57,6 @@ public class DomaParser {
         }
     }
 
-    @Nullable
     private static String getLocalId(Elements columns) {
         try {
             String mapUrl = getMapUrl(columns);
@@ -70,7 +66,6 @@ public class DomaParser {
         }
     }
 
-    @Nullable
     private static String getDateString(Elements columns) {
         try {
             return columns.get(2).text();
@@ -79,7 +74,6 @@ public class DomaParser {
         }
     }
 
-    @Nullable
     private static String getMapName(Elements columns) {
         try {
             return columns.get(1).select("a").get(0).text();
@@ -88,7 +82,6 @@ public class DomaParser {
         }
     }
 
-    @Nullable
     private static String getOwnerName(Elements columns) {
         try {
             return columns.get(0).select("a").get(0).text();
@@ -97,7 +90,6 @@ public class DomaParser {
         }
     }
 
-    @Nullable
     private static String getOwnerUserName(Elements columns){
         try {
             return columns.get(0).select("a").get(0).attr("href").split("=")[1];

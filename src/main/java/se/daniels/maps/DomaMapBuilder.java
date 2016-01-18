@@ -1,7 +1,5 @@
 package se.daniels.maps;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -29,7 +27,7 @@ public class DomaMapBuilder {
     public DomaMapBuilder(){
     }
 
-    public DomaMapBuilder setName(@Nullable String mapName){
+    public DomaMapBuilder setName(String mapName){
         return this;
     }
 
