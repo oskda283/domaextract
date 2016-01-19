@@ -1,21 +1,18 @@
-package se.daniels.maps;
+package se.daniels.domaextract.application;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.GeoLocation;
-import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import org.apache.commons.io.FileUtils;
+import se.daniels.domaextract.domain.gpslocation.GPSLocation;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MapLocationExtractor {
+public class GPSLocationExtractor {
     public static GPSLocation extractFromJpgUrl(String mapUrl)  {
         File imageFile = new File("mapFile.jpg");
         try {

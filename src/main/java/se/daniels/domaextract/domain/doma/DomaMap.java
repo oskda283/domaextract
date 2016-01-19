@@ -1,4 +1,6 @@
-package se.daniels.maps;
+package se.daniels.domaextract.domain.doma;
+
+import se.daniels.domaextract.domain.gpslocation.GPSLocation;
 
 import java.util.Date;
 

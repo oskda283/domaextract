@@ -1,4 +1,4 @@
-package se.daniels.maps;
+package se.daniels.domaextract.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

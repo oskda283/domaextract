@@ -1,6 +1,4 @@
-package se.daniels.maps;
-
-import java.net.URL;
+package se.daniels.domaextract.domain.doma;
 
 public class DomaOwner {
 

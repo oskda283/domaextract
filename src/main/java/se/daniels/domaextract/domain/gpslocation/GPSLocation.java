@@ -1,4 +1,4 @@
-package se.daniels.maps;
+package se.daniels.domaextract.domain.gpslocation;
 
 public class GPSLocation {
 
