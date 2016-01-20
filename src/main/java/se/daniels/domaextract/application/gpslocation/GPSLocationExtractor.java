@@ -1,4 +1,4 @@
-package se.daniels.domaextract.application;
+package se.daniels.domaextract.application.gpslocation;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;

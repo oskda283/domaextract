@@ -1,20 +1,21 @@
-package se.daniels.domaextract.domain.doma;
+package se.daniels.domaextract.domain.map;
 
 import se.daniels.domaextract.domain.gpslocation.GPSLocation;
+import se.daniels.domaextract.domain.mapowner.MapOwner;
 
 import java.util.Date;
 
-public class DomaMap {
+public class OMap {
 
     public final String name;
 
-    public final String domaUrl;
+    public final String imageUrl;
 
     public final String mapUrl;
 
     public final String localId;
 
-    public final DomaOwner owner;
+    public final MapOwner owner;
 
     public final Date date;
 
@@ -22,9 +23,9 @@ public class DomaMap {
 
     public final GPSLocation gpsLocation;
 
-    public DomaMap(String name, String domaUrl, String mapUrl, String localId, DomaOwner owner, Date date, Date updateDate, GPSLocation gpsLocation) {
+    public OMap(String name, String imageUrl, String mapUrl, String localId, MapOwner owner, Date date, Date updateDate, GPSLocation gpsLocation) {
         this.name = name;
-        this.domaUrl = domaUrl;
+        this.imageUrl = imageUrl;
         this.mapUrl = mapUrl;
         this.localId = localId;
         this.owner = owner;

@@ -1,11 +1,13 @@
-package se.daniels.domaextract.application;
+package se.daniels.domaextract.application.doma;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import se.daniels.domaextract.domain.doma.DomaMap;
-import se.daniels.domaextract.domain.doma.DomaMapBuilder;
-import se.daniels.domaextract.domain.doma.DomaOwner;
+import se.daniels.domaextract.application.gpslocation.GPSLocationExtractor;
+import se.daniels.domaextract.domain.map.MapBuilder;
+import se.daniels.domaextract.domain.mapowner.MapOwner;
+import se.daniels.domaextract.domain.mapowner.MapSource;
+import se.daniels.domaextract.domain.map.OMap;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,12 +22,12 @@ import java.util.List;
 
 public class DomaParser {
 
-    public static List<DomaMap> parse(Document doc, String baseUrl) throws MalformedURLException {
-        List<DomaMap> domaMapList = new ArrayList<>();
+    public static List<OMap> parse(Document doc, MapSource mapSource) throws MalformedURLException {
+        List<OMap> domaMapList = new ArrayList<>();
         Elements elements = doc.select(".fullWidth").get(1).select("tbody tr");
         for(Element element : elements){
             try {
-                domaMapList.add(extractOmap(element, baseUrl));
+                domaMapList.add(extractOmap(element, mapSource));
             } catch (ParseException | NullPointerException e) {
                 System.out.print("Could not parse row with data: "+ element.html());
             }
@@ -33,18 +35,18 @@ public class DomaParser {
         return domaMapList;
     }
 
-    private static DomaMap extractOmap(Element tableRow, String baseUrl) throws ParseException {
+    private static OMap extractOmap(Element tableRow, MapSource mapSource) throws ParseException {
         Elements row = tableRow.select("td");
         String localId = getLocalId(row);
-        String mapUrl = getMapUrl(baseUrl,localId);
+        String mapUrl = getMapUrl(mapSource.reference,localId);
 
-        return new DomaMapBuilder()
-                .setOwner(new DomaOwner(baseUrl,getOwnerUserName(row),getOwnerName(row)))
+        return new MapBuilder()
+                .setOwner(new MapOwner(mapSource,getOwnerUserName(row),getOwnerName(row)))
                 .setName(getMapName(row))
                 .setDate(getDateString(row))
                 .setLocalId(localId)
-                .setMapUrl(mapUrl)
-                .setDomaUrl(baseUrl + getDomaUrlEnding(row))
+                .setImageUrl(mapUrl)
+                .setMapUrl(mapSource.reference + getDomaUrlEnding(row))
                 .setUpdateDate(getUpdateDate(row))
                 .setGpsLocation(GPSLocationExtractor.extractFromJpgUrl(mapUrl))
                 .build();

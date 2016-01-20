@@ -5,8 +5,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.daniels.domaextract.application.DomaextractApplication;
-import se.daniels.domaextract.application.MapExtractor;
-import se.daniels.domaextract.domain.doma.DomaMap;
+import se.daniels.domaextract.application.doma.DomaSourceExtractor;
+import se.daniels.domaextract.domain.map.OMap;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,8 +17,8 @@ public class DomaExtractorTests {
 
     @Test
     public void shouldExtractOmaps() throws IOException {
-        MapExtractor mapExtractor = new MapExtractor("http://kartarkiv.turebergsif.se/");
-        List<DomaMap> domaMaps = mapExtractor.extract();
-        assert !domaMaps.isEmpty();
+        DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
+        List<OMap> oMaps = domaSourceExtractor.extract();
+        assert !oMaps.isEmpty();
     }
 }
