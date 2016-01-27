@@ -18,16 +18,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 public class DomaParser {
 
-    public static List<OMap> parse(Document doc, MapSource mapSource) throws MalformedURLException {
+    public static List<OMap> parse(Document doc, MapSource mapSource, Optional<Date> startDate) throws MalformedURLException {
         List<OMap> domaMapList = new ArrayList<>();
         Elements elements = doc.select(".fullWidth").get(1).select("tbody tr");
         for(Element element : elements){
+            Elements columns = element.select("td");
             try {
-                domaMapList.add(extractOmap(element, mapSource));
+                if(startDate.isPresent() && getUpdateDate(columns).before(startDate.get())){
+                    return domaMapList;
+                }
+                domaMapList.add(extractOmap(columns, mapSource));
             } catch (ParseException | NullPointerException e) {
                 System.out.print("Could not parse row with data: "+ element.html());
             }
@@ -35,8 +40,21 @@ public class DomaParser {
         return domaMapList;
     }
 
-    private static OMap extractOmap(Element tableRow, MapSource mapSource) throws ParseException {
-        Elements row = tableRow.select("td");
+    public static List<MapOwner> parseUsers(Document doc, MapSource mapSource) {
+        List<MapOwner> userList = new ArrayList<>();
+        Elements elements = doc.select(".fullWidth").get(0).select("tbody tr");
+        for(Element element : elements){
+            Elements columns = element.select("td");
+            try {
+                userList.add(new MapOwner(mapSource, getOwnerUserName(columns), getOwnerName(columns)));
+            } catch (NullPointerException e) {
+                System.out.print("Could not parse row with data: "+ element.html());
+            }
+        }
+        return userList;
+    }
+
+    private static OMap extractOmap(Elements row, MapSource mapSource) throws ParseException {
         String localId = getLocalId(row);
         String mapUrl = getMapUrl(mapSource.reference,localId);
 
@@ -114,6 +132,7 @@ public class DomaParser {
         return testUrl(url) ? url : null;
     }
 
+
     private static boolean testUrl(String url) {
         try {
             final URL testUrl = new URL(url);
@@ -125,6 +144,4 @@ public class DomaParser {
             return false;
         }
     }
-
-
 }

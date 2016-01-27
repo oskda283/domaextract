@@ -7,8 +7,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.daniels.domaextract.application.DomaextractApplication;
 import se.daniels.domaextract.application.doma.DomaSourceExtractor;
 import se.daniels.domaextract.domain.map.OMap;
+import se.daniels.domaextract.domain.mapowner.MapOwner;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -16,9 +21,17 @@ import java.util.List;
 public class DomaExtractorTests {
 
     @Test
-    public void shouldExtractOmaps() throws IOException {
+    public void shouldExtractNewOmaps() throws IOException {
         DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
-        List<OMap> oMaps = domaSourceExtractor.extract();
+        List<OMap> oMaps = domaSourceExtractor.extractAllAfter(Date.from(LocalDateTime.now().minusMonths(1).toInstant(ZoneOffset.UTC)));
         assert !oMaps.isEmpty();
     }
+
+    @Test
+    public void shouldExtractUsers() throws IOException {
+        DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
+        List<MapOwner> users = domaSourceExtractor.extractAllUsers();
+        assert !users.isEmpty();
+    }
+
 }
