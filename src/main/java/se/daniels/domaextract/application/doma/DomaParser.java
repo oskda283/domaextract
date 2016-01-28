@@ -61,10 +61,7 @@ public class DomaParser {
         return new MapBuilder()
                 .setOwner(new MapOwner(mapSource,getOwnerUserName(row),getOwnerName(row)))
                 .setName(getMapName(row))
-                .setDate(getDateString(row))
                 .setLocalId(localId)
-                .setImageUrl(mapUrl)
-                .setMapUrl(mapSource.reference + getDomaUrlEnding(row))
                 .setUpdateDate(getUpdateDate(row))
                 .setGpsLocation(GPSLocationExtractor.extractFromJpgUrl(mapUrl))
                 .build();

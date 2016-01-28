@@ -13,13 +13,7 @@ public class MapBuilder {
 
     private String localId;
 
-    private Date date;
-
     private Date updateDate;
-
-    private String imageUrl;
-
-    private String mapUrl;
 
     private GPSLocation gpsLocation;
 
@@ -40,23 +34,8 @@ public class MapBuilder {
         return this;
     }
 
-    public MapBuilder setDate(Date date)  {
-        this.date = date;
-        return this;
-    }
-
     public MapBuilder setUpdateDate(Date date) {
         this.updateDate = date;
-        return this;
-    }
-
-    public MapBuilder setImageUrl(String url) {
-        this.imageUrl = url;
-        return this;
-    }
-
-    public MapBuilder setMapUrl(String url){
-        this.mapUrl = url;
         return this;
     }
 
@@ -66,6 +45,6 @@ public class MapBuilder {
     }
 
     public OMap build(){
-        return new OMap(name, imageUrl, mapUrl, localId, owner, date, updateDate, gpsLocation);
+        return new OMap(name, localId, owner, updateDate, gpsLocation);
     }
 }
