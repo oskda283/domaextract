@@ -6,18 +6,30 @@ import se.daniels.domaextract.domain.mapowner.MapOwner;
 import se.daniels.domaextract.domain.mapowner.MapSource;
 import se.daniels.domaextract.domain.mapowner.MapSourceType;
 
+import java.util.Optional;
+import java.util.regex.PatternSyntaxException;
+
 import static se.daniels.domaextract.domain.mapowner.MapSourceType.DOMA;
 
 public class DomaRssEntryMapper {
 
-    public static OMap toOMap(DomaRssEntry entry){
-        return new OMap(
-                entry.title,
-                id(entry),
-                new MapOwner(new MapSource(DOMA,baseUrl(entry)),userName(entry),name(entry)),
-                entry.date,
-                null
-        );
+    public static Optional<OMap> toOMap(DomaRssEntry entry){
+        try {
+            return Optional.of(new OMap(
+                    entry.title,
+                    id(entry),
+                    new MapOwner(new MapSource(DOMA,baseUrl(entry)),userName(entry),name(entry)),
+                    entry.date,
+                    null,
+                    mapUrl(entry)
+            ));
+        } catch (RuntimeException e){
+            System.out.println("Could not create map from: " + entry.toString());
+            return Optional.empty();
+        }
+    }
+
+    private static String mapUrl(DomaRssEntry entry) { return baseUrl(entry) + "map_images/" + id(entry) + ".jpg";
     }
 
     private static String name(DomaRssEntry entry) {

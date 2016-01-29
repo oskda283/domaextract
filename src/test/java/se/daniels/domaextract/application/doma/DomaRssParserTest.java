@@ -16,7 +16,7 @@ public class DomaRssParserTest {
 
     @Test
     public void testParse() throws Exception {
-        Stream<OMap> maps = domaRssParser.parse(new URL("http://kartarkiv.turebergsif.se/rss.php"));
+        Stream<OMap> maps = domaRssParser.parse("http://kartarkiv.turebergsif.se/rss.php");
         List<OMap> mapList = maps.collect(Collectors.toList());
         assert mapList.size() > 0;
     }

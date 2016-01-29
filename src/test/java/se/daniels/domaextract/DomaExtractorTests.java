@@ -28,6 +28,13 @@ public class DomaExtractorTests {
     }
 
     @Test
+    public void shouldExtractAllOmaps() throws IOException {
+        DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
+        List<OMap> oMaps = domaSourceExtractor.extractAll();
+        assert !oMaps.isEmpty();
+    }
+
+    @Test
     public void shouldExtractUsers() throws IOException {
         DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
         List<MapOwner> users = domaSourceExtractor.extractAllUsers();

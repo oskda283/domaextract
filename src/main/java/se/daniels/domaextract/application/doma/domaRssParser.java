@@ -10,26 +10,45 @@ import se.daniels.domaextract.domain.DomaRssEntry;
 import se.daniels.domaextract.domain.map.OMap;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class DomaRssParser {
 
-    public Stream<OMap> parse(URL url) throws IOException {
+    public static Stream<DomaRssEntry> parseRss(String urlString) throws IOException {
+        URL url = new URL(urlString);
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = null;
         try {
             feed = input.build(new XmlReader(url));
-            return streamOmaps(feed);
+            return streamEntries(feed);
         } catch (FeedException e) {
             return Stream.empty();
         }
     }
 
-    private Stream<OMap> streamOmaps(SyndFeed feed) {
+    public static Stream<OMap> parse(String urlString) throws IOException {
+        return parseRss(urlString).map(DomaRssEntryMapper::toOMap)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(DomaRssParser::imageExist);
+    }
+
+    public static Stream<OMap> parseAfter(String rssUrl, Date latestDate) throws IOException {
+        return parseRss(rssUrl)
+                .filter(entry -> entry.date.after(latestDate))
+                .map(DomaRssEntryMapper::toOMap)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(DomaRssParser::imageExist);
+    }
+
+    private static Stream<DomaRssEntry> streamEntries(SyndFeed feed) {
         List<DomaRssEntry> domaRssEntries = new ArrayList<DomaRssEntry>();
         List<SyndEntryImpl> entries = (List<SyndEntryImpl>) feed.getEntries();
         for(SyndEntryImpl entry : entries){
@@ -40,12 +59,27 @@ public class DomaRssParser {
                     entry.getDescription().getValue()
             ));
         }
-        return domaRssEntries.stream().map(DomaRssEntryMapper::toOMap);
+        return domaRssEntries.stream();
     }
 
-    private Date date(SyndEntryImpl entry) {
+    private static boolean imageExist(OMap oMap) {
+        return exists(oMap.getImageUrl());
+    }
+
+    private static boolean exists(String url) {
+        try {
+            final URL testUrl = new URL(url);
+            HttpURLConnection huc = (HttpURLConnection) testUrl.openConnection();
+            huc.setRequestMethod("HEAD");
+            int responseCode = huc.getResponseCode();
+            return responseCode == 200;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static Date date(SyndEntryImpl entry) {
         DCModuleImpl module = (DCModuleImpl) entry.getModules().get(0);
         return module.getDate();
     }
-
 }

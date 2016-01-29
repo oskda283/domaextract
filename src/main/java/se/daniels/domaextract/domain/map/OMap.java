@@ -7,21 +7,52 @@ import java.util.Date;
 
 public class OMap {
 
-    public final String name;
+    private String name;
 
-    public final String localId;
+    private String localId;
 
-    public final MapOwner owner;
+    private MapOwner owner;
 
-    public final Date updateDate;
+    private Date updateDate;
 
-    public final GPSLocation gpsLocation;
+    private GPSLocation gpsLocation;
 
-    public OMap(String name, String localId, MapOwner owner, Date updateDate, GPSLocation gpsLocation) {
+    private String imageUrl;
+
+    public OMap(String name, String localId, MapOwner owner, Date updateDate, GPSLocation gpsLocation, String imageUrl) {
         this.name = name;
         this.localId = localId;
         this.owner = owner;
         this.updateDate = updateDate;
+        this.gpsLocation = gpsLocation;
+        this.imageUrl = imageUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLocalId() {
+        return localId;
+    }
+
+    public MapOwner getOwner() {
+        return owner;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public GPSLocation getGpsLocation() {
+        return gpsLocation;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setGpsLocation(GPSLocation gpsLocation) {
         this.gpsLocation = gpsLocation;
     }
 }

@@ -9,11 +9,16 @@ import se.daniels.domaextract.domain.mapowner.MapSourceType;
 import se.daniels.domaextract.domain.map.OMap;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DomaSourceExtractor implements MapSourceExtractor {
 
@@ -30,8 +35,8 @@ public class DomaSourceExtractor implements MapSourceExtractor {
     public List<OMap> extractAll() throws IOException {
         LocalTime start = LocalTime.now();
 
-        Document doc = Jsoup.connect(mapSource.reference + ALL_MAPS_URL).get();
-        List<OMap> domaMaps = DomaParser.parse(doc, mapSource, Optional.empty());
+        List<OMap> domaMaps = new ArrayList<>();
+        extractAllUsers().forEach(mapOwner -> domaMaps.addAll(extractAllFromUser(mapOwner)));
 
         Duration duration = Duration.between(start, LocalTime.now());
         System.out.print("Extracted " + domaMaps.size() + " maps in " + duration.getSeconds() + " seconds\n");
@@ -41,27 +46,35 @@ public class DomaSourceExtractor implements MapSourceExtractor {
 
     @Override
     public List<OMap> extractAllAfter(Date latestDate) throws IOException {
-        LocalTime start = LocalTime.now();
-
-        Document doc = Jsoup.connect(mapSource.reference + ALL_MAPS_URL).get();
-        List<OMap> domaMaps = DomaParser.parse(doc, mapSource, Optional.of(latestDate));
-
-        Duration duration = Duration.between(start, LocalTime.now());
-        System.out.print("Extracted " + domaMaps.size() + " maps in " + duration.getSeconds() + " seconds\n");
-
-        return domaMaps;
+        try {
+            return DomaRssParser.parseAfter(getRssUrl(), latestDate).collect(Collectors.toList());
+        } catch (IOException e) {
+            System.out.println("Could not get maps from: " + mapSource.reference);
+            return new ArrayList<>();
+        }
     }
 
     public List<MapOwner> extractAllUsers() throws IOException {
-
         Document doc = Jsoup.connect(mapSource.reference + ALL_USERS).get();
-        List<MapOwner> domaUsers = DomaParser.parseUsers(doc, mapSource);
-
-        System.out.print("Extracted " + domaUsers.size() + " users\n");
-
-        return domaUsers;
+        return DomaParser.parseUsers(doc, mapSource);
     }
 
+    private List<OMap> extractAllFromUser(MapOwner mapOwner){
+        try {
+            return DomaRssParser.parse(getRssUrl(mapOwner)).collect(Collectors.toList());
+        } catch (IOException e) {
+            System.out.println("Could nod get maps from user: " + mapOwner.userName);
+            return new ArrayList<>();
+        }
+    }
+
+    private String getRssUrl(MapOwner mapOwner) {
+        return getRssUrl()+ "?user=" + mapOwner.userName;
+    }
+
+    private String getRssUrl() {
+        return mapSource.reference + "rss.php";
+    }
 
 
 }
