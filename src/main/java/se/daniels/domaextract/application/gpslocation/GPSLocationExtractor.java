@@ -9,21 +9,22 @@ import org.apache.commons.io.FileUtils;
 import se.daniels.domaextract.domain.gpslocation.GPSLocation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.time.Instant;
 
 public class GPSLocationExtractor {
     public static GPSLocation extractFromJpgUrl(String mapUrl)  {
-        File imageFile = new File("mapFile.jpg");
         try {
-            FileUtils.copyURLToFile(new URL(mapUrl), imageFile);
-            Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+            InputStream inputStream = new URL(mapUrl).openStream();
+            Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
             GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             if(directory == null){
                 return null;
             }
             GeoLocation location = directory.getGeoLocation();
-            imageFile.delete();
             if(location == null){
                 return null;
             }

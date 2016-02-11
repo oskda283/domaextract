@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,8 +32,10 @@ public class DomaSourceExtractor implements MapSourceExtractor {
     public List<OMap> extractAll() throws IOException {
         LocalTime start = LocalTime.now();
 
-        List<OMap> domaMaps = new ArrayList<>();
-        extractAllUsers().forEach(mapOwner -> domaMaps.addAll(extractAllFromUser(mapOwner)));
+        List<OMap> domaMaps = extractAllUsers().stream()
+                .map(this::extractAllFromUser)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
         Duration duration = Duration.between(start, LocalTime.now());
         System.out.print("Extracted " + domaMaps.size() + " maps in " + duration.getSeconds() + " seconds\n");
@@ -47,7 +46,14 @@ public class DomaSourceExtractor implements MapSourceExtractor {
     @Override
     public List<OMap> extractAllAfter(Date latestDate) throws IOException {
         try {
-            return DomaRssParser.parseAfter(getRssUrl(), latestDate).collect(Collectors.toList());
+            LocalTime start = LocalTime.now();
+
+            List<OMap> maps = DomaRssParser.parseAfter(getRssUrl(), latestDate).collect(Collectors.toList());
+
+            Duration duration = Duration.between(start, LocalTime.now());
+            System.out.print("Extracted " + maps.size() + " maps in " + duration.getSeconds() + " seconds\n");
+
+            return maps;
         } catch (IOException e) {
             System.out.println("Could not get maps from: " + mapSource.reference);
             return new ArrayList<>();

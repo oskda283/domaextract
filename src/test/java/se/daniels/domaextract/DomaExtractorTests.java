@@ -23,7 +23,7 @@ public class DomaExtractorTests {
     @Test
     public void shouldExtractNewOmaps() throws IOException {
         DomaSourceExtractor domaSourceExtractor = new DomaSourceExtractor("http://kartarkiv.turebergsif.se/");
-        List<OMap> oMaps = domaSourceExtractor.extractAllAfter(Date.from(LocalDateTime.now().minusMonths(1).toInstant(ZoneOffset.UTC)));
+        List<OMap> oMaps = domaSourceExtractor.extractAllAfter(Date.from(LocalDateTime.now().minusMonths(2).toInstant(ZoneOffset.UTC)));
         assert !oMaps.isEmpty();
     }
 

@@ -1,6 +1,8 @@
 package se.daniels.domaextract.application.doma;
 
+import se.daniels.domaextract.application.gpslocation.GPSLocationExtractor;
 import se.daniels.domaextract.domain.DomaRssEntry;
+import se.daniels.domaextract.domain.gpslocation.GPSLocation;
 import se.daniels.domaextract.domain.map.OMap;
 import se.daniels.domaextract.domain.mapowner.MapOwner;
 import se.daniels.domaextract.domain.mapowner.MapSource;
@@ -20,13 +22,17 @@ public class DomaRssEntryMapper {
                     id(entry),
                     new MapOwner(new MapSource(DOMA,baseUrl(entry)),userName(entry),name(entry)),
                     entry.date,
-                    null,
+                    location(entry),
                     mapUrl(entry)
             ));
         } catch (RuntimeException e){
             System.out.println("Could not create map from: " + entry.toString());
             return Optional.empty();
         }
+    }
+
+    private static GPSLocation location(DomaRssEntry entry) {
+        return GPSLocationExtractor.extractFromJpgUrl(mapUrl(entry));
     }
 
     private static String mapUrl(DomaRssEntry entry) { return baseUrl(entry) + "map_images/" + id(entry) + ".jpg";
